@@ -5,7 +5,9 @@
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
-    "cypress": "^8.3.1"
+    "cypress": "^8.3.1",
+    "cypress-file-upload": "^5.0.8",
+    "faker": "^5.5.3"
   },
   "scripts": {
     "test": "cypress open"
