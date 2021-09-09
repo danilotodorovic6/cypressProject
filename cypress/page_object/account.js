@@ -1,4 +1,5 @@
 /// <reference types="Cypress" />
+import data from "../fixtures/data.json";
 
 class Account{
     accountBtn(){
@@ -22,23 +23,29 @@ class Account{
     currentPassword(){
         return cy.get('[name="currentpassword"]').first();
     }
+    newPassword(){
+        return cy.get('[name="newpassword"]').first();
+    }
+    repeatNewPassword(){
+        return cy.get('[name="repeatnewpassword"]').first();
+    }
 
-    changeAccountSettings(firstName, lastName, password){
+    changePersonalInfo(firstName, lastName){
         this.accountBtn().click();
         cy.url().should("contain", "account/my-assignments");
         this.profileBtn().click();
         cy.url().should("contain", "account/settings");
         this.changeFirstName().clear();
-        this.changeFirstName().type(firstName).then((element) => {
-            cy.wrap(element).invoke("val").should("equal", firstName);
-        });
+        this.changeFirstName().type(firstName);
         this.changeLastName().clear();
-        this.changeLastName().type(lastName).then((element) => {
-            cy.wrap(element).invoke("val").should("equal", lastName);
-        });
+        this.changeLastName().type(lastName);
         this.updateBtn().click();
-        this.currentPassword().type(password);
     }
 }
+
+// this.currentPassword().type(oldpassword);
+// this.newPassword().type(newpassword);
+// this.repeatNewPassword().type(newpassword);
+
 
 export const account = new Account();

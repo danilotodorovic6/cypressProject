@@ -1,0 +1,7 @@
+{
+    "emailError": "The email field must be a valid email",
+    "passwordError": "The password field is required",
+    "profileUpdate": "Done! Profile info successfully updated.",
+    "invalidPassword/Email": "Oops! Your email/password combination is incorrect",
+    "passwordCharacters": "The password field must be at least 5 characters"
+}

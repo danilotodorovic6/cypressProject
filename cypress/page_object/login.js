@@ -1,9 +1,6 @@
 /// <reference types="Cypress" />
 
-import data from "../fixtures/data.json";
-
 class Login{
-       
     loginInput(){
         return cy.get("[type='email']");
     }
@@ -13,9 +10,9 @@ class Login{
     loginBtn(){
         return cy.get("[type='submit']");
     }
-    loginClick(){ 
-        this.loginInput().type(data.user.email);
-        this.passwordInput().type(data.user.password);
+    loginClick(email, password){ 
+        this.loginInput().type(email);
+        this.passwordInput().type(password);
         this.loginBtn().click();
     }
 }
