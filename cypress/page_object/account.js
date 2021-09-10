@@ -53,10 +53,13 @@ class Account{
         this.updateBtn().click();
     }
 
-    changePassword(password){
-        this.currentPassword().type(password);
-        this.newPassword().type(password);
-        this.repeatNewPassword().type(password);
+    changePassword(oldpassword, newpassword){
+        
+        this.currentPassword().type(oldpassword).then(() => {
+            oldpassword = newpassword;
+        });
+        this.newPassword().type(newpassword);
+        this.repeatNewPassword().type(newpassword);
     }
 }
 

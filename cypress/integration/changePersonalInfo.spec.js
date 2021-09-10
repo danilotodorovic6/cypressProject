@@ -18,13 +18,13 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     return false
   })
 
-describe("Login", () => {
+describe("Changing personal info", () => {
     beforeEach(() => {
         cy.visit("/login");
         login.loginClick(data.user.email, data.user.password);
         cy.url().should("contain", "my-organizations");
     })
-    it("Change personal info", () => {
+    it("Change personal info with valid values", () => {
         cy.intercept("PUT", "https://cypress-api.vivifyscrum-stage.com/api/v2/users").as("updateProfileInfo");
         account.changeAccountSettings();
         account.changePersonalInfo(accountData.firstName, accountData.lastName);
