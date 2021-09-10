@@ -64,7 +64,6 @@ class Account{
             })
             .click();
     }
-
 }
 
 

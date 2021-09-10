@@ -57,6 +57,7 @@ describe("Login test cases", () => {
     it("Login without credentials", () => {
         login.loginClick("{selectall}", "{backspace}");
         cy.url().should("contain", "/login");
+        //trenutno nemam drugo resenje za ovaj case :(
         cy.get('form.el-form')
             .first()
             .get("span.el-form-item__error")
