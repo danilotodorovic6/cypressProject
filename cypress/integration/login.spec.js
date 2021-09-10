@@ -3,6 +3,7 @@
 import { login } from "../page_object/login.js";
 import data from "../fixtures/data.json";
 import validation from "../../validationMessages.json";
+import { account } from "../page_object/account.js";
 let faker = require("faker");
 
 let validUser = {
@@ -38,44 +39,53 @@ describe("Login test cases", () => {
     it("Login with valid email and invalid password", () => {
         login.loginClick(validUser.email, invalidUser.password);
         cy.url().should("contain", "/login");
-        cy.get('.vs-c-custom-errors > .el-form-item__error').should("be.visible").and("contain", validation["invalidPassword/Email"]);
+        account.validationError(validation["invalidPassword/Email"]);
     })
 
     it("Login with invalid email and valid password", () => {
         login.loginClick(invalidUser.email, validUser.password);
         cy.url().should("contain", "/login");
-        cy.get('.vs-c-custom-errors > .el-form-item__error').should("be.visible").and("contain", validation["invalidPassword/Email"]);
+        account.validationError(validation["invalidPassword/Email"]);
     })
 
     it("Login with invalid email and invalid password", () => {
         login.loginClick(invalidUser.email, invalidUser.password);
         cy.url().should("contain", "/login");
-        cy.get('.vs-c-custom-errors > .el-form-item__error').should("be.visible").and("contain", validation["invalidPassword/Email"]);
+        account.validationError(validation["invalidPassword/Email"]);;
     })
 
     it("Login without credentials", () => {
         login.loginClick("{selectall}", "{backspace}");
         cy.url().should("contain", "/login");
-        cy.get(".el-form-item__error.el-form-item-error--top").first().should("be.visible").and("contain", validation.emailError);
-        cy.get(".el-form-item__error.el-form-item-error--top").last().should("be.visible").and("contain", validation.passwordError);
-        
+        cy.get('form.el-form')
+            .first()
+            .get("span.el-form-item__error")
+            .first()
+            .should("be.visible")
+            .and("have.text", validation.emailError);
+        cy.get('form.el-form')
+            .first()
+            .get("span.el-form-item__error")
+            .last()
+            .should("be.visible")
+            .and("have.text", validation.passwordError);
     })
 
     it("Login without email", () => {
         login.loginClick("{selectall}", validUser.password);
         cy.url().should("contain", "/login");
-        cy.get(".el-form-item__error.el-form-item-error--top").first().should("be.visible").and("contain", validation.emailError);
+        account.validationError(validation.emailError);
     })
 
     it("Login without password", () => {
         login.loginClick(validUser.email, "{selectall}");
         cy.url().should("contain", "/login");
-        cy.get(".el-form-item__error.el-form-item-error--top").last().should("be.visible").and("contain", validation.passwordError);
+        account.validationError(validation.passwordError);        
     })
 
     it("Check for at least 5 characters error in password", () => {
         login.loginClick(validUser.email, invalidUser.shortPassword);
         cy.url().should("contain", "/login");
-        cy.get(".el-form-item__error.el-form-item-error--top").last().should("be.visible").and("contain", validation.passwordCharacters);
+        account.validationError(validation.passwordCharacters);        
     })
 })

@@ -13,16 +13,16 @@ class Account{
     uploadImageBtn(){
         return cy.get('[class="vs-u-img--round"]');
     }
-    changeFirstName(){
-        return cy.get("input[name='first_name']");
-    }
-    changeLastName(){
-        return cy.get("input[name='last_name']");
-    }
     updateBtn(){
         return cy.get('button[type="submit"]').eq(0);
     }
-
+    validationError(error){
+        cy.get('form.el-form')
+            .first()
+            .get("span.el-form-item__error")
+            .should("be.visible")
+            .and("have.text", error);
+    }
 
     changeAccountSettings(){
         this.findByHref("/account").click();
@@ -32,20 +32,12 @@ class Account{
     }
 
     changePersonalInfo(firstName, lastName){
-        this.changeFirstName().clear();
-        cy.get('form.el-form')
-            .first()
-            .get("span.el-form-item__error")
-            .should("be.visible")
-            .and("have.text", validation.firstNameError);
-        this.changeFirstName().type(firstName);
-        this.changeLastName().clear();
-        cy.get('form.el-form')
-            .first()
-            .get("span.el-form-item__error")
-            .should("be.visible")
-            .and("have.text", validation.lastNameError);
-        this.changeLastName().type(lastName);
+        this.findByName("first_name").clear();
+        this.validationError(validation.firstNameError);
+        this.findByName("first_name").type(firstName);
+        this.findByName("last_name").clear();
+        this.validationError(validation.lastNameError);
+        this.findByName("last_name").type(lastName);
         this.updateBtn().click();
     }
 
@@ -70,7 +62,7 @@ class Account{
                 const items = $li.toArray();
                 return items[getRandomInt(0,6)];
             })
-            .click()
+            .click();
     }
 
 }
