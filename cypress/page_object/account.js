@@ -1,5 +1,7 @@
 /// <reference types="Cypress" />
 import data from "../fixtures/data.json";
+import validation from "../../validationMessages.json";
+
 
 class Account{
     accountBtn(){
@@ -30,22 +32,33 @@ class Account{
         return cy.get('[name="repeatnewpassword"]').first();
     }
 
-    changePersonalInfo(firstName, lastName){
+    changeAccountSettings(){
         this.accountBtn().click();
         cy.url().should("contain", "account/my-assignments");
         this.profileBtn().click();
         cy.url().should("contain", "account/settings");
+    }
+
+    changePersonalInfo(firstName, lastName){
         this.changeFirstName().clear();
+        cy.get('.vs-c-settings-section__info > .vs-c-settings-section-form > .el-form > :nth-child(1) > .vs-c-form-item__error-wrapper > .el-form-item__error')
+            .should("be.visible")
+            .and("have.text", validation.firstNameError);
         this.changeFirstName().type(firstName);
         this.changeLastName().clear();
+        cy.get('.vs-c-settings-section__info > .vs-c-settings-section-form > .el-form > :nth-child(2) > .vs-c-form-item__error-wrapper > .el-form-item__error')
+            .should("be.visible")
+            .and("have.text", validation.lastNameError);
         this.changeLastName().type(lastName);
         this.updateBtn().click();
     }
-}
 
-// this.currentPassword().type(oldpassword);
-// this.newPassword().type(newpassword);
-// this.repeatNewPassword().type(newpassword);
+    changePassword(password){
+        this.currentPassword().type(password);
+        this.newPassword().type(password);
+        this.repeatNewPassword().type(password);
+    }
+}
 
 
 export const account = new Account();

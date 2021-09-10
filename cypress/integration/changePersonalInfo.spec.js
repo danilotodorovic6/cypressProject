@@ -3,6 +3,7 @@
 import { login } from "../page_object/login.js";
 import { account } from "../page_object/account.js";
 import validation from "../../validationMessages.json";
+import data from "../fixtures/data.json";
 
 let faker = require("faker");
 
@@ -20,11 +21,12 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 describe("Login", () => {
     beforeEach(() => {
         cy.visit("/login");
-        login.loginClick();
+        login.loginClick(data.user.email, data.user.password);
         cy.url().should("contain", "my-organizations");
     })
     it("Change personal info", () => {
         cy.intercept("PUT", "https://cypress-api.vivifyscrum-stage.com/api/v2/users").as("updateProfileInfo");
+        account.changeAccountSettings();
         account.changePersonalInfo(accountData.firstName, accountData.lastName);
         cy.wait("@updateProfileInfo").then((intercept) => {
             console.log(intercept);

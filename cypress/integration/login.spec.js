@@ -3,7 +3,6 @@
 import { login } from "../page_object/login.js";
 import data from "../fixtures/data.json";
 import validation from "../../validationMessages.json";
-import { internet } from "faker/locale/de";
 let faker = require("faker");
 
 let validUser = {

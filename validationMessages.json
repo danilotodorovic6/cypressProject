@@ -3,5 +3,7 @@
     "passwordError": "The password field is required",
     "profileUpdate": "Done! Profile info successfully updated.",
     "invalidPassword/Email": "Oops! Your email/password combination is incorrect",
-    "passwordCharacters": "The password field must be at least 5 characters"
+    "passwordCharacters": "The password field must be at least 5 characters",
+    "firstNameError": "The first name field is required",
+    "lastNameError": "The last name field is required"
 }
