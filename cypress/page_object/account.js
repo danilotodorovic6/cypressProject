@@ -4,11 +4,11 @@ import validation from "../../validationMessages.json";
 
 
 class Account{
-    accountBtn(){
-        return cy.get("a[href='/account']");
+    findByName(name) {
+        return cy.get(`[name=${name}]`)
     }
-    profileBtn(){
-        return cy.get("a[href='/account/settings']");
+    findByHref(href) {
+        return cy.get(`a[href="${href}"]`)
     }
     uploadImageBtn(){
         return cy.get('[class="vs-u-img--round"]');
@@ -22,31 +22,27 @@ class Account{
     updateBtn(){
         return cy.get('button[type="submit"]').eq(0);
     }
-    currentPassword(){
-        return cy.get('[name="currentpassword"]').first();
-    }
-    newPassword(){
-        return cy.get('[name="newpassword"]').first();
-    }
-    repeatNewPassword(){
-        return cy.get('[name="repeatnewpassword"]').first();
-    }
+
 
     changeAccountSettings(){
-        this.accountBtn().click();
+        this.findByHref("/account").click();
         cy.url().should("contain", "account/my-assignments");
-        this.profileBtn().click();
+        this.findByHref("/account/settings").click();
         cy.url().should("contain", "account/settings");
     }
 
     changePersonalInfo(firstName, lastName){
         this.changeFirstName().clear();
-        cy.get('.vs-c-settings-section__info > .vs-c-settings-section-form > .el-form > :nth-child(1) > .vs-c-form-item__error-wrapper > .el-form-item__error')
+        cy.get('form.el-form')
+            .first()
+            .get("span.el-form-item__error")
             .should("be.visible")
             .and("have.text", validation.firstNameError);
         this.changeFirstName().type(firstName);
         this.changeLastName().clear();
-        cy.get('.vs-c-settings-section__info > .vs-c-settings-section-form > .el-form > :nth-child(2) > .vs-c-form-item__error-wrapper > .el-form-item__error')
+        cy.get('form.el-form')
+            .first()
+            .get("span.el-form-item__error")
             .should("be.visible")
             .and("have.text", validation.lastNameError);
         this.changeLastName().type(lastName);
@@ -54,13 +50,29 @@ class Account{
     }
 
     changePassword(oldpassword, newpassword){
-        
-        this.currentPassword().type(oldpassword).then(() => {
+        this.findByName("currentpassword").first().type(oldpassword).then(() => {
             oldpassword = newpassword;
         });
-        this.newPassword().type(newpassword);
-        this.repeatNewPassword().type(newpassword);
+        this.findByName("newpassword").first().type(newpassword);
+        this.findByName("repeatnewpassword").first().type(newpassword);
     }
+
+    changeTheme(){
+        cy.get(".vs-c-dropdown-underline > button").click();
+        cy.get("ul.el-dropdown-menu > li")
+            .should("have.length", 7)
+            .then(($li) => {
+                function getRandomInt(min, max) {
+                    min = Math.ceil(min);
+                    max = Math.floor(max);
+                    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+                  }
+                const items = $li.toArray();
+                return items[getRandomInt(0,6)];
+            })
+            .click()
+    }
+
 }
 
 

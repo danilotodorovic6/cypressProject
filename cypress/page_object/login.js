@@ -1,19 +1,14 @@
 /// <reference types="Cypress" />
 
 class Login{
-    loginInput(){
-        return cy.get("[type='email']");
-    }
-    passwordInput(){
-        return cy.get("[type='password']");
-    }
-    loginBtn(){
-        return cy.get("[type='submit']");
+
+    findByType(type) {
+        return cy.get(`[type=${type}]`)
     }
     loginClick(email, password){ 
-        this.loginInput().type(email);
-        this.passwordInput().type(password);
-        this.loginBtn().click();
+        this.findByType('email').type(email);
+        this.findByType('password').type(password);
+        this.findByType('submit').click();
     }
 }
 

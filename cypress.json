@@ -1,3 +1,4 @@
 {
-    "baseUrl": "https://stage.vivifyscrum.com/"
+    "baseUrl": "https://stage.vivifyscrum.com/",
+    "defaultCommandTimeout": 6000
 }
