@@ -1,4 +1,5 @@
 {
     "baseUrl": "https://stage.vivifyscrum.com/",
-    "defaultCommandTimeout": 6000
+    "defaultCommandTimeout": 6000,
+    "watchForFileChanges": false
 }
