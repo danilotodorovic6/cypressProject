@@ -4,8 +4,9 @@ import { login } from "../page_object/login.js";
 import { account } from "../page_object/account.js";
 import data from "../fixtures/data.json";
 import updatedPassword from "../fixtures/updatedPassword.json"
+let faker = require("faker");
 
-let pass = "password124";
+let pass = faker.internet.password();
 
 Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
@@ -27,6 +28,9 @@ describe("Login", () => {
         account.changePassword(updatedPassword.updatedPassword, pass);
         cy.wait("@updatedPassword").then((intercept) => {
             console.log(intercept);
+            expect(intercept.response.statusCode).to.eq(200);
+            cy.get(".el-message__group").should("be.visible")
+                .and("contain", "Done! Profile info successfully updated.");
         })
     })
 
