@@ -20,6 +20,7 @@ let invalidUser = {
 Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
+    console.log('cawooo')
     return false
   })
 
