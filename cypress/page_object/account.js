@@ -4,18 +4,25 @@ import validation from "../../validationMessages.json";
 
 
 class Account{
+
+    updatedPassword = false;
+
+    get uploadImageBtn(){
+        return cy.get('[class="vs-u-img--round"]');
+    }
+
+    get updateBtn(){
+        return cy.get('button[type="submit"]').eq(0);
+    }
+
     findByName(name) {
         return cy.get(`[name=${name}]`)
     }
+
     findByHref(href) {
         return cy.get(`a[href="${href}"]`)
     }
-    uploadImageBtn(){
-        return cy.get('[class="vs-u-img--round"]');
-    }
-    updateBtn(){
-        return cy.get('button[type="submit"]').eq(0);
-    }
+
     validationError(error){
         cy.get('form.el-form')
             .first()
@@ -38,31 +45,23 @@ class Account{
         this.findByName("last_name").clear();
         this.validationError(validation.lastNameError);
         this.findByName("last_name").type(lastName);
-        this.updateBtn().click();
+        this.updateBtn.click();
     }
 
-    changePassword(oldpassword, newpassword){
-        this.findByName("currentpassword").first().type(oldpassword).then(() => {
-            oldpassword = newpassword;
+    changePassword(oldPassword, newPassword){
+        this.findByName("currentpassword").first().type(oldPassword);
+        this.findByName("newpassword").first().type(newPassword);
+        this.findByName("repeatnewpassword").first().type(newPassword).then(() => {
+            this.updatedPassword = newPassword;
         });
-        this.findByName("newpassword").first().type(newpassword);
-        this.findByName("repeatnewpassword").first().type(newpassword);
     }
 
     changeTheme(){
         cy.get(".vs-c-dropdown-underline > button").click();
         cy.get("ul.el-dropdown-menu > li")
             .should("have.length", 7)
-            .then(($li) => {
-                function getRandomInt(min, max) {
-                    min = Math.ceil(min);
-                    max = Math.floor(max);
-                    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-                  }
-                const items = $li.toArray();
-                return items[getRandomInt(0,6)];
-            })
-            .click();
+            .each((element) =>{})
+            .click({ multiple: true, force: true})
     }
 }
 

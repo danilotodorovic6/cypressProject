@@ -5,11 +5,7 @@ import { account } from "../page_object/account.js";
 import data from "../fixtures/data.json";
 let faker = require("faker");
 
-// let password = '';
-// if(password === ''){
-//     password = 11111111;
-// }
-
+let pass = "password123";
 
 Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
@@ -20,12 +16,19 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 describe("Login", () => {
     beforeEach(() => {
         cy.visit("/login");
-        login.loginClick(data.user.email, data.user.password)
+        if(account.updatedPassword === false){
+            return login.loginClick(data.user.email, data.user.password);
+        }
+        login.loginClick(data.user.email, account.updatedPassword);
         cy.url().should("contain", "my-organizations");
     })
     it("Account settings", () => {
         account.changeAccountSettings();
-        account.changePassword("11111111", "22222");
+        if(account.updatedPassword === false){
+            return account.changePassword(data.user.password, pass);
+        }
+        account.changePassword(account.updatedPassword, pass);
+        cy.log(account.updatedPassword)
     })
 
 })

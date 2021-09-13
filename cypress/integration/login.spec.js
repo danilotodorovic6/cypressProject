@@ -14,7 +14,7 @@ let validUser = {
 let invalidUser = {
     email: faker.internet.email(),
     password: faker.internet.password(),
-    shortPassword: "12"
+    shortPassword: "1"
 }
 
 Cypress.on('uncaught:exception', (err, runnable) => {
@@ -54,8 +54,8 @@ describe("Login test cases", () => {
         account.validationError(validation["invalidPassword/Email"]);;
     })
 
-    it("Login without credentials", () => {
-        login.loginClick("{selectall}", "{backspace}");
+    it.only("Login without credentials", () => {
+        login.findByType('submit').click();
         cy.url().should("contain", "/login");
         //trenutno nemam drugo resenje za ovaj case :(
         cy.get('form.el-form')
@@ -73,13 +73,13 @@ describe("Login test cases", () => {
     })
 
     it("Login without email", () => {
-        login.loginClick("{selectall}", validUser.password);
+        login.loginClick("{selectall}{backspace}", validUser.password);
         cy.url().should("contain", "/login");
         account.validationError(validation.emailError);
     })
 
     it("Login without password", () => {
-        login.loginClick(validUser.email, "{selectall}");
+        login.loginClick(validUser.email, "{selectall}{backspace}");
         cy.url().should("contain", "/login");
         account.validationError(validation.passwordError);        
     })

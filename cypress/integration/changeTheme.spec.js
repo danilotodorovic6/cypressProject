@@ -19,22 +19,21 @@ describe("Changing theme", () => {
         cy.url().should("contain", "my-organizations");
     })
     it("Change theme", () => {
-        cy.intercept("PUT", "https://cypress-api.vivifyscrum-stage.com/api/v2/user-theme")
+        cy.intercept("PUT", "api/v2/user-theme")
             .as("themeChanged")
         account.changeAccountSettings();
         account.changeTheme();
         cy.wait("@themeChanged")
             .then((intercept) => {
-                console.log(intercept);
                 expect(intercept.response.statusCode).to.eq(200);
                 cy.get(".el-message").should("be.visible")
                     .and("contain", validation.successfullUpdatedTheme);
                 //ovo sledece ne radi samo sam ti ostavio code da vidis sta sam radio
                 //kasno sam video da se ta dva zapravo ne poklapaju
                 //ali eto, da vidis kako sam se snasao (:
-                cy.get(".vs-c-dropdown-underline > button").then(($text) => {
-                    return $text.text();
-                }).should("equal", intercept.response.body.theme);
+                cy.get(".vs-c-dropdown-underline > button").then((element) => {
+                    return element.text();
+                }).should("eq", intercept.response.body.theme);
             })
         
     })
