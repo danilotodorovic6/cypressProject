@@ -4,6 +4,7 @@ import { login } from "../page_object/login.js";
 import { account } from "../page_object/account.js";
 import data from "../fixtures/data.json";
 import validation from "../../validationMessages.json";
+import updatedPassword from "../fixtures/updatedPassword.json"
 
 
 Cypress.on('uncaught:exception', (err, runnable) => {
@@ -15,7 +16,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 describe("Changing theme", () => {
     beforeEach(() => {
         cy.visit("/login");
-        login.loginClick(data.user.email, data.user.password);
+        login.loginClick(data.user.email, updatedPassword.updatedPassword);
         cy.url().should("contain", "my-organizations");
     })
     it("Change theme", () => {
@@ -28,12 +29,6 @@ describe("Changing theme", () => {
                 expect(intercept.response.statusCode).to.eq(200);
                 cy.get(".el-message").should("be.visible")
                     .and("contain", validation.successfullUpdatedTheme);
-                //ovo sledece ne radi samo sam ti ostavio code da vidis sta sam radio
-                //kasno sam video da se ta dva zapravo ne poklapaju
-                //ali eto, da vidis kako sam se snasao (:
-                cy.get(".vs-c-dropdown-underline > button").then((element) => {
-                    return element.text();
-                }).should("eq", intercept.response.body.theme);
             })
         
     })

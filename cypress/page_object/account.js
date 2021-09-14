@@ -10,7 +10,7 @@ class Account{
     }
 
     get updateBtn(){
-        return cy.get('button[type="submit"]').eq(2);
+        return cy.get('button[type="submit"]');
     }
 
     findByName(name) {
@@ -21,10 +21,11 @@ class Account{
         return cy.get(`a[href="${href}"]`)
     }
 
-    validationError(error){
+    validationError(error, formIndex, spanIndex){
         cy.get('form.el-form')
-            .first()
+            .eq(formIndex)
             .get("span.el-form-item__error")
+            .eq(spanIndex)
             .should("be.visible")
             .and("have.text", error);
     }
@@ -43,16 +44,16 @@ class Account{
         this.findByName("last_name").clear();
         this.validationError(validation.lastNameError);
         this.findByName("last_name").type(lastName);
-        this.updateBtn.click();
+        this.updateBtn.eq(0).click();
     }
 
 
     changePassword(oldPassword, newPassword){
-        cy.writeFile("cypress/fixtures/updatedPassword.json", { updatedPassword: newPassword }).then(() => {
+            cy.writeFile("cypress/fixtures/updatedPassword.json", { updatedPassword: newPassword }).then(() => {
             this.findByName("currentpassword").first().type(oldPassword);
             this.findByName("newpassword").first().type(newPassword);
             this.findByName("repeatnewpassword").first().type(newPassword);
-            this.updateBtn.click();
+            this.updateBtn.eq(2).click();
         });
     }
 

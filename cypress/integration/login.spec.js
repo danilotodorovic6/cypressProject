@@ -4,11 +4,13 @@ import { login } from "../page_object/login.js";
 import data from "../fixtures/data.json";
 import validation from "../../validationMessages.json";
 import { account } from "../page_object/account.js";
+import updatedPassword from "../fixtures/updatedPassword.json"
+
 let faker = require("faker");
 
 let validUser = {
     email: data.user.email,
-    password: data.user.password
+    password: updatedPassword.updatedPassword
 }
 
 let invalidUser = {
@@ -54,7 +56,7 @@ describe("Login test cases", () => {
         account.validationError(validation["invalidPassword/Email"]);;
     })
 
-    it.only("Login without credentials", () => {
+    it("Login without credentials", () => {
         login.findByType('submit').click();
         cy.url().should("contain", "/login");
         //trenutno nemam drugo resenje za ovaj case :(
