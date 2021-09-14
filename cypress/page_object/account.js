@@ -26,10 +26,10 @@ class Account{
     }
 
     validationError(error, formIndex, spanIndex){
-        cy.wait(1000)
+        cy.wait(500)
         cy.get('form.el-form')
             .eq(formIndex)
-            .get("span.el-form-item__error")
+            .find("span.el-form-item__error")
             .eq(spanIndex)
             .should("exist")
             .and("have.text", error);
@@ -43,30 +43,26 @@ class Account{
     }
 
     changePersonalInfo(firstName, lastName){
-        this.findByName("first_name").clear();
-        this.validationError(validation.firstNameError, 0, 0);
-        this.findByName("first_name").type(firstName);
-        this.findByName("last_name").clear();
-        this.validationError(validation.lastNameError, 0, 1);
-        this.findByName("last_name").type(lastName);
-        this.updateBtn.eq(0).click();
+        this.findByName("first_name").clear().type(firstName);
+        this.findByName("last_name").clear().type(lastName);
+        this.updateBtn.first().click();
     }
 
 
-    changePassword(oldPassword, newPassword){
-            cy.writeFile("cypress/fixtures/updatedPassword.json", { updatedPassword: newPassword }).then(() => {
+    changePassword(oldPassword, newPassword, repeatNewPassword){
             this.findByName("currentpassword").first().type(oldPassword);
             this.findByName("newpassword").first().type(newPassword);
-            this.findByName("repeatnewpassword").first().type(newPassword);
+            this.findByName("repeatnewpassword").first().type(repeatNewPassword);
             this.updateBtn.eq(2).click();
-        });
     }
 
     changeTheme(){
         cy.get(".vs-c-dropdown-underline > button").click();
         cy.get("ul.el-dropdown-menu > li")
             .should("have.length", 7)
-            .click({ multiple: true, force: true})
+            .each((el) => {
+                el.click();
+            })
     }
 }
 

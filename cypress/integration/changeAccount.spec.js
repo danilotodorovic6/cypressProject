@@ -46,35 +46,83 @@ describe("Changing account settings", () => {
             cy.get(".el-message__group").should("be.visible").and("contain", validation.profileUpdate);            
         })
     })
+    it("Change personal info without credentials", () => {
+        account.changeAccountSettings();
+        account.changePersonalInfo("{selectall}{backspace}", "{selectall}{backspace}");
+        account.validationError(validation.firstNameError, 0, 0);
+        account.validationError(validation.lastNameError, 0, 1);
+    })
+    it("Change personal info without first name", () => {
+        account.changeAccountSettings();
+        account.changePersonalInfo("{selectall}{backspace}", accountData.lastName);
+        account.validationError(validation.firstNameError, 0, 0);
+    })
+    it("Change personal info without last name", () => {
+        account.changeAccountSettings();
+        account.changePersonalInfo(accountData.firstName, "{selectall}{backspace}");
+        account.validationError(validation.lastNameError, 0, 1);
+    })
 
 
     it("Changing password with valid credentials", () => {
         cy.intercept("POST", "/api/v2/update-password").as("updatedPassword");
         account.changeAccountSettings();
-        account.changePassword(updatedPassword.updatedPassword, passwords.validPassword);
+        account.changePassword(updatedPassword.updatedPassword, passwords.validPassword, passwords.validPassword);
         cy.wait("@updatedPassword").then((intercept) => {
             expect(intercept.response.statusCode).to.eq(200);
             cy.get(".el-message__group").should("be.visible")
                 .and("contain", "Done! Profile info successfully updated.");
         })
+        cy.writeFile("cypress/fixtures/updatedPassword.json", { updatedPassword: passwords.validPassword });
     })
-    // it("Changing password with invalid current password", () => {
-    //     cy.intercept("POST", "/api/v2/update-password").as("updatedPassword");
-    //     account.changeAccountSettings();
-    //     account.changePassword(passwords.invalidCurrentPassword, passwords.validPassword);
-    //     cy.wait("@updatedPassword").then((intercept) => {
-    //         expect(intercept.response.statusCode).to.eq(400);
-    //         cy.get(".el-message").should("be.visible")
-    //             .and("contain", "Error updating the password. Please check all the fields again.")
-    //     })
-    // })
-    // it("Changing password with short passwords", () => {
-    //     account.changeAccountSettings();
-    //     account.changePassword(passwords.invalidShortPassword, passwords.invalidShortPassword);
-    //     account.validationError(validation.passwordCharacters, 2, 0, {force: true});
-    //     account.validationError(validation.passwordCharacters, 2, 1);
-    //     account.validationError(validation.passwordCharacters, 2, 2);
-    // })
+
+    it("Changing password without credentials", () => {
+        account.changeAccountSettings();
+        account.changePassword("{selectall}{backspace}", "{selectall}{backspace}", "{selectall}{backspace}");
+        account.validationError(validation.currentPasswordError, 2, 0);
+        account.validationError(validation.passwordError, 2, 1);
+        account.validationError(validation.newPasswordError, 2, 2);
+    })
+
+    it("Changing password without current password", () => {
+        account.changeAccountSettings();
+        account.changePassword("{selectall}{backspace}", passwords.validPassword, passwords.validPassword);
+        account.validationError(validation.currentPasswordError, 2, 0);
+    })
+    it("Changing password without new password", () => {
+        account.changeAccountSettings();
+        account.changePassword(passwords.validPassword, "{selectall}{backspace}", passwords.validPassword);
+        account.validationError(validation.passwordsNotMatching, 2, 2);
+    })
+    it("Changing password without repeat new password", () => {
+        account.changeAccountSettings();
+        account.changePassword(passwords.validPassword, passwords.validPassword, "{selectall}{backspace}");
+        account.validationError(validation.newPasswordError, 2, 2);
+    })
+
+    it("Changing password with invalid current password", () => {
+        cy.intercept("POST", "/api/v2/update-password").as("updatedPassword");
+        account.changeAccountSettings();
+        account.changePassword(passwords.invalidCurrentPassword, passwords.validPassword, passwords.validPassword);
+        cy.wait("@updatedPassword").then((intercept) => {
+            expect(intercept.response.statusCode).to.eq(400);
+            cy.get(".el-message").should("be.visible")
+                .and("contain", validation.unsuccessfullUpdatedPassword)
+        })
+    })
+    it("Changing password with short passwords", () => {
+        account.changeAccountSettings();
+        account.changePassword(passwords.invalidShortPassword, passwords.invalidShortPassword, passwords.invalidShortPassword);
+        account.validationError(validation.currentPasswordCharacters, 2, 0);
+        account.validationError(validation.passwordCharacters, 2, 1);
+        account.validationError(validation.newPasswordCharacters, 2, 2);
+    })
+
+    it("New password and repeated new password not matching", () => {
+        account.changeAccountSettings();
+        account.changePassword(passwords.validPassword, passwords.validPassword, passwords.invalidCurrentPassword);
+        account.validationError(validation.passwordsNotMatching, 2, 2);
+    })
 
     it("Change theme", () => {
         cy.intercept("PUT", "api/v2/user-theme")
