@@ -5,14 +5,12 @@ import validation from "../../validationMessages.json";
 
 class Account{
 
-    updatedPassword = false;
-
     get uploadImageBtn(){
         return cy.get('[class="vs-u-img--round"]');
     }
 
     get updateBtn(){
-        return cy.get('button[type="submit"]').eq(0);
+        return cy.get('button[type="submit"]').eq(2);
     }
 
     findByName(name) {
@@ -48,11 +46,13 @@ class Account{
         this.updateBtn.click();
     }
 
+
     changePassword(oldPassword, newPassword){
-        this.findByName("currentpassword").first().type(oldPassword);
-        this.findByName("newpassword").first().type(newPassword);
-        this.findByName("repeatnewpassword").first().type(newPassword).then(() => {
-            this.updatedPassword = newPassword;
+        cy.writeFile("cypress/fixtures/updatedPassword.json", { updatedPassword: newPassword }).then(() => {
+            this.findByName("currentpassword").first().type(oldPassword);
+            this.findByName("newpassword").first().type(newPassword);
+            this.findByName("repeatnewpassword").first().type(newPassword);
+            this.updateBtn.click();
         });
     }
 
