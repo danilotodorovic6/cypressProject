@@ -41,54 +41,43 @@ describe("Login test cases", () => {
     it("Login with valid email and invalid password", () => {
         login.loginClick(validUser.email, invalidUser.password);
         cy.url().should("contain", "/login");
-        account.validationError(validation["invalidPassword/Email"]);
+        account.validationError(validation["invalidPassword/Email"], 0, 2);
     })
 
     it("Login with invalid email and valid password", () => {
         login.loginClick(invalidUser.email, validUser.password);
         cy.url().should("contain", "/login");
-        account.validationError(validation["invalidPassword/Email"]);
+        account.validationError(validation["invalidPassword/Email"], 0, 2);
     })
 
     it("Login with invalid email and invalid password", () => {
         login.loginClick(invalidUser.email, invalidUser.password);
         cy.url().should("contain", "/login");
-        account.validationError(validation["invalidPassword/Email"]);;
+        account.validationError(validation["invalidPassword/Email"], 0, 2);
     })
 
     it("Login without credentials", () => {
         login.findByType('submit').click();
         cy.url().should("contain", "/login");
-        //trenutno nemam drugo resenje za ovaj case :(
-        cy.get('form.el-form')
-            .first()
-            .get("span.el-form-item__error")
-            .first()
-            .should("be.visible")
-            .and("have.text", validation.emailError);
-        cy.get('form.el-form')
-            .first()
-            .get("span.el-form-item__error")
-            .last()
-            .should("be.visible")
-            .and("have.text", validation.passwordError);
+        account.validationError(validation.emailError, 0, 0);
+        account.validationError(validation.passwordError, 0, 1);
     })
 
     it("Login without email", () => {
         login.loginClick("{selectall}{backspace}", validUser.password);
         cy.url().should("contain", "/login");
-        account.validationError(validation.emailError);
+        account.validationError(validation.emailError, 0, 0);
     })
 
     it("Login without password", () => {
         login.loginClick(validUser.email, "{selectall}{backspace}");
         cy.url().should("contain", "/login");
-        account.validationError(validation.passwordError);        
+        account.validationError(validation.passwordError, 0, 1);        
     })
 
     it("Check for at least 5 characters error in password", () => {
         login.loginClick(validUser.email, invalidUser.shortPassword);
         cy.url().should("contain", "/login");
-        account.validationError(validation.passwordCharacters);        
+        account.validationError(validation.passwordCharacters, 0, 1);        
     })
 })

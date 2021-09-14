@@ -21,12 +21,17 @@ class Account{
         return cy.get(`a[href="${href}"]`)
     }
 
+    get loadingSpinner(){
+        return cy.get(".el-loading-spinner");
+    }
+
     validationError(error, formIndex, spanIndex){
+        cy.wait(1000)
         cy.get('form.el-form')
             .eq(formIndex)
             .get("span.el-form-item__error")
             .eq(spanIndex)
-            .should("be.visible")
+            .should("exist")
             .and("have.text", error);
     }
 
@@ -39,10 +44,10 @@ class Account{
 
     changePersonalInfo(firstName, lastName){
         this.findByName("first_name").clear();
-        this.validationError(validation.firstNameError);
+        this.validationError(validation.firstNameError, 0, 0);
         this.findByName("first_name").type(firstName);
         this.findByName("last_name").clear();
-        this.validationError(validation.lastNameError);
+        this.validationError(validation.lastNameError, 0, 1);
         this.findByName("last_name").type(lastName);
         this.updateBtn.eq(0).click();
     }
@@ -61,7 +66,6 @@ class Account{
         cy.get(".vs-c-dropdown-underline > button").click();
         cy.get("ul.el-dropdown-menu > li")
             .should("have.length", 7)
-            .each((element) =>{})
             .click({ multiple: true, force: true})
     }
 }
