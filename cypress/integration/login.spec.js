@@ -6,19 +6,6 @@ import validation from "../../validationMessages.json";
 import { account } from "../page_object/account.js";
 import updatedPassword from "../fixtures/updatedPassword.json"
 
-let faker = require("faker");
-
-let validUser = {
-    email: data.user.email,
-    password: updatedPassword.updatedPassword
-}
-
-let invalidUser = {
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    shortPassword: "1"
-}
-
 Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
@@ -34,24 +21,24 @@ describe("Login test cases", () => {
     })
 
     it("Login with valid credentials", () => {
-        login.loginClick(validUser.email, validUser.password);
+        login.loginClick(login.validUser.email, login.validUser.password);
         cy.url().should("contain", "my-organizations");
     })
 
     it("Login with valid email and invalid password", () => {
-        login.loginClick(validUser.email, invalidUser.password);
+        login.loginClick(login.validUser.email, login.invalidUser.password);
         cy.url().should("contain", "/login");
         account.validationError(validation["invalidPassword/Email"], 0, 2);
     })
 
     it("Login with invalid email and valid password", () => {
-        login.loginClick(invalidUser.email, validUser.password);
+        login.loginClick(login.invalidUser.email, login.validUser.password);
         cy.url().should("contain", "/login");
         account.validationError(validation["invalidPassword/Email"], 0, 2);
     })
 
     it("Login with invalid email and invalid password", () => {
-        login.loginClick(invalidUser.email, invalidUser.password);
+        login.loginClick(login.invalidUser.email, login.invalidUser.password);
         cy.url().should("contain", "/login");
         account.validationError(validation["invalidPassword/Email"], 0, 2);
     })
@@ -64,19 +51,19 @@ describe("Login test cases", () => {
     })
 
     it("Login without email", () => {
-        login.loginClick("{selectall}{backspace}", validUser.password);
+        login.loginClick("{selectall}{backspace}", login.validUser.password);
         cy.url().should("contain", "/login");
         account.validationError(validation.emailError, 0, 0);
     })
 
     it("Login without password", () => {
-        login.loginClick(validUser.email, "{selectall}{backspace}");
+        login.loginClick(login.validUser.email, "{selectall}{backspace}");
         cy.url().should("contain", "/login");
         account.validationError(validation.passwordError, 0, 1);        
     })
 
     it("Check for at least 5 characters error in password", () => {
-        login.loginClick(validUser.email, invalidUser.shortPassword);
+        login.loginClick(login.validUser.email, login.invalidUser.shortPassword);
         cy.url().should("contain", "/login");
         account.validationError(validation.passwordCharacters, 0, 1);        
     })

@@ -1,9 +1,21 @@
 /// <reference types="Cypress" />
 import data from "../fixtures/data.json";
 import validation from "../../validationMessages.json";
+let faker = require("faker");
 
 
 class Account{
+
+    passwords = {
+        invalidCurrentPassword: "random123",
+        invalidShortPassword: "1",
+        validPassword: "pass1234"
+    }
+
+    accountData = {
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName()
+    }
 
     get uploadImageBtn(){
         return cy.get('[class="vs-u-img--round"]');
