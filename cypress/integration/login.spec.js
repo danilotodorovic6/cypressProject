@@ -4,18 +4,7 @@ import { login } from "../page_object/login.js";
 import data from "../fixtures/data.json";
 import validation from "../../validationMessages.json";
 import { account } from "../page_object/account.js";
-let faker = require("faker");
-
-let validUser = {
-    email: data.user.email,
-    password: data.user.password
-}
-
-let invalidUser = {
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    shortPassword: "1"
-}
+import updatedPassword from "../fixtures/updatedPassword.json"
 
 Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
@@ -33,61 +22,50 @@ describe("Login test cases", () => {
     })
 
     it("Login with valid credentials", () => {
-        login.loginClick(validUser.email, validUser.password);
+        login.loginClick(login.validUser.email, login.validUser.password);
         cy.url().should("contain", "my-organizations");
     })
 
     it("Login with valid email and invalid password", () => {
-        login.loginClick(validUser.email, invalidUser.password);
+        login.loginClick(login.validUser.email, login.invalidUser.password);
         cy.url().should("contain", "/login");
-        account.validationError(validation["invalidPassword/Email"]);
+        account.validationError(validation["invalidPassword/Email"], 0, 2);
     })
 
     it("Login with invalid email and valid password", () => {
-        login.loginClick(invalidUser.email, validUser.password);
+        login.loginClick(login.invalidUser.email, login.validUser.password);
         cy.url().should("contain", "/login");
-        account.validationError(validation["invalidPassword/Email"]);
+        account.validationError(validation["invalidPassword/Email"], 0, 2);
     })
 
     it("Login with invalid email and invalid password", () => {
-        login.loginClick(invalidUser.email, invalidUser.password);
+        login.loginClick(login.invalidUser.email, login.invalidUser.password);
         cy.url().should("contain", "/login");
-        account.validationError(validation["invalidPassword/Email"]);;
+        account.validationError(validation["invalidPassword/Email"], 0, 2);
     })
 
-    it.only("Login without credentials", () => {
+    it("Login without credentials", () => {
         login.findByType('submit').click();
         cy.url().should("contain", "/login");
-        //trenutno nemam drugo resenje za ovaj case :(
-        cy.get('form.el-form')
-            .first()
-            .get("span.el-form-item__error")
-            .first()
-            .should("be.visible")
-            .and("have.text", validation.emailError);
-        cy.get('form.el-form')
-            .first()
-            .get("span.el-form-item__error")
-            .last()
-            .should("be.visible")
-            .and("have.text", validation.passwordError);
+        account.validationError(validation.emailError, 0, 0);
+        account.validationError(validation.passwordError, 0, 1);
     })
 
     it("Login without email", () => {
-        login.loginClick("{selectall}{backspace}", validUser.password);
+        login.loginClick("{selectall}{backspace}", login.validUser.password);
         cy.url().should("contain", "/login");
-        account.validationError(validation.emailError);
+        account.validationError(validation.emailError, 0, 0);
     })
 
     it("Login without password", () => {
-        login.loginClick(validUser.email, "{selectall}{backspace}");
+        login.loginClick(login.validUser.email, "{selectall}{backspace}");
         cy.url().should("contain", "/login");
-        account.validationError(validation.passwordError);        
+        account.validationError(validation.passwordError, 0, 1);        
     })
 
     it("Check for at least 5 characters error in password", () => {
-        login.loginClick(validUser.email, invalidUser.shortPassword);
+        login.loginClick(login.validUser.email, login.invalidUser.shortPassword);
         cy.url().should("contain", "/login");
-        account.validationError(validation.passwordCharacters);        
+        account.validationError(validation.passwordCharacters, 0, 1);        
     })
 })

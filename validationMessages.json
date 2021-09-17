@@ -1,10 +1,16 @@
 {
     "emailError": "The email field must be a valid email",
     "passwordError": "The password field is required",
+    "newPasswordError": "The new password field is required",
+    "currentPasswordError": "The current password field is required",
+    "passwordsNotMatching": "Passwords do not match",
     "profileUpdate": "Done! Profile info successfully updated.",
     "invalidPassword/Email": "Oops! Your email/password combination is incorrect",
     "passwordCharacters": "The password field must be at least 5 characters",
+    "currentPasswordCharacters": "The current password field must be at least 5 characters",
+    "newPasswordCharacters": "The new password field must be at least 5 characters",
     "firstNameError": "The first name field is required",
     "lastNameError": "The last name field is required",
-    "successfullUpdatedTheme": "Successfully updated VivifyScrum theme!"
+    "successfullUpdatedTheme": "Successfully updated VivifyScrum theme!",
+    "unsuccessfullUpdatedPassword": "Error updating the password. Please check all the fields again."
 }

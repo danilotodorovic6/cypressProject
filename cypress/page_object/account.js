@@ -1,16 +1,28 @@
 /// <reference types="Cypress" />
 import data from "../fixtures/data.json";
 import validation from "../../validationMessages.json";
+let faker = require("faker");
 
 
 class Account{
+
+    passwords = {
+        invalidCurrentPassword: "random123",
+        invalidShortPassword: "1",
+        validPassword: "pass1234"
+    }
+
+    accountData = {
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName()
+    }
 
     get uploadImageBtn(){
         return cy.get('[class="vs-u-img--round"]');
     }
 
     get updateBtn(){
-        return cy.get('button[type="submit"]').eq(2);
+        return cy.get('button[type="submit"]');
     }
 
     findByName(name) {
@@ -21,11 +33,17 @@ class Account{
         return cy.get(`a[href="${href}"]`)
     }
 
-    validationError(error){
+    get loadingSpinner(){
+        return cy.get(".el-loading-spinner");
+    }
+
+    validationError(error, formIndex, spanIndex){
+        cy.wait(500)
         cy.get('form.el-form')
-            .first()
-            .get("span.el-form-item__error")
-            .should("be.visible")
+            .eq(formIndex)
+            .find("span.el-form-item__error")
+            .eq(spanIndex)
+            .should("exist")
             .and("have.text", error);
     }
 
@@ -37,31 +55,26 @@ class Account{
     }
 
     changePersonalInfo(firstName, lastName){
-        this.findByName("first_name").clear();
-        this.validationError(validation.firstNameError);
-        this.findByName("first_name").type(firstName);
-        this.findByName("last_name").clear();
-        this.validationError(validation.lastNameError);
-        this.findByName("last_name").type(lastName);
-        this.updateBtn.click();
+        this.findByName("first_name").clear().type(firstName);
+        this.findByName("last_name").clear().type(lastName);
+        this.updateBtn.first().click();
     }
 
 
-    changePassword(oldPassword, newPassword){
-        cy.writeFile("cypress/fixtures/updatedPassword.json", { updatedPassword: newPassword }).then(() => {
+    changePassword(oldPassword, newPassword, repeatNewPassword){
             this.findByName("currentpassword").first().type(oldPassword);
             this.findByName("newpassword").first().type(newPassword);
-            this.findByName("repeatnewpassword").first().type(newPassword);
-            this.updateBtn.click();
-        });
+            this.findByName("repeatnewpassword").first().type(repeatNewPassword);
+            this.updateBtn.eq(2).click();
     }
 
     changeTheme(){
         cy.get(".vs-c-dropdown-underline > button").click();
         cy.get("ul.el-dropdown-menu > li")
             .should("have.length", 7)
-            .each((element) =>{})
-            .click({ multiple: true, force: true})
+            .each((el) => {
+                el.click();
+            })
     }
 }
 
