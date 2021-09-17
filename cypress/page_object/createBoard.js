@@ -16,20 +16,32 @@ class Board{
     get deleteBoardBtn(){
         return cy.get(".vs-c-btn--warning");
     }
-    
+
+    get addNewBoard(){
+        return cy.get(".vs-c-organization-boards__item--add-new")
+    }
+
+    get existingBoard(){
+        return cy.get(".vs-c-organization-boards__item");
+    }
+
     createBoard(){
-        this.boardsBtn.last().click();
+        account.findByHref("/organizations/820/boards").click();
+        account.findByName("close-new-board-modal-btn").click();
+        this.addNewBoard.click();
         account.findByName("name").type(this.newBoard.title);
-        account.findByName("next_btn").click();
-        account.findByName("type_scrum").click();
-        account.findByName("next_btn").click();
-        account.findByName("next_btn").click();
-        account.findByName("next_btn").click();
+        for(let i = 0; i < 4; i++){
+            if(i === 1){
+                account.findByName("type_scrum").click();
+            }
+            account.findByName("next_btn").click();
+        }
     }
     deleteBoard(){
         account.findByHref(`/boards/${this.newBoard.boardID}/settings`).click();
         this.deleteBoardBtn.click();
         account.findByName("save-btn").click();
+        account.findByName("close-new-board-modal-btn").click();
     }
 }
 
