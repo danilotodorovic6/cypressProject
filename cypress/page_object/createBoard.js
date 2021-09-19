@@ -36,7 +36,9 @@ class Board{
             }
             account.findByName("next_btn").click();
         }
+        this.existingBoard.eq(-1).find(".vs-c-boards-item__title").should("have.text", this.newBoard.title);
     }
+
     deleteBoard(){
         account.findByHref(`/boards/${this.newBoard.boardID}/settings`).click();
         this.deleteBoardBtn.click();

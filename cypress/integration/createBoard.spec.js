@@ -25,10 +25,14 @@ describe("New board flow", () => {
         cy.wait("@boardCreated").then((intercept) => {
             board.newBoard.boardID = intercept.response.body.id;
             expect(intercept.response.statusCode).to.eq(201);
-            expect(intercept.response.body.name).to.eq(board.newBoard.title);           
         })
     })
+
     it("Delete new board", () => {
+        cy.intercept("DELETE", `/api/v2/boards/${board.newBoard.boardID}`).as("deleteBoard");
         board.deleteBoard();
+        cy.wait("@deleteBoard").then((intercept) => {
+            expect(intercept.response.statusCode).to.eq(200);
+        })
     })
 })
